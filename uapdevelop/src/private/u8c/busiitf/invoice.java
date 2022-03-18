@@ -83,7 +83,7 @@ public class invoice  implements IAPICustmerDevelop{
 
 	private PostResult setPostResult(ApplyInvoiceBody body){
 		PostResult postResult=new PostResult();
-		postResult.setBillID(body.getAdviceNote());
+		postResult.setBillID(body.getAdviceNote());		
 		
 		String strBody="";
 		try{
@@ -101,18 +101,32 @@ public class invoice  implements IAPICustmerDevelop{
 			parentvo.setQcbz(false);
 			parentvo.setScomment(body.getZyx1());
 			parentvo.setXslxbm("arap");
-			parentvo.setZyx1(body.getAdviceNote());
+			parentvo.setZyx1(body.getAdviceNote());//自定义1 发票申请单号
+			parentvo.setZyx4("蓝票");//自定义4 操作类型
+			parentvo.setZyx5(body.getPmName());//自定义5 项目
+			parentvo.setZyx6(body.getSmName());//自定义6 业务员
+			parentvo.setZyx7(String.valueOf(body.getBusiType()));//自定义7 BusiType
 			billVO.setParentvo(parentvo);
 			//单据体
 			List<ChildrenVO> children=new ArrayList();
 			for(ApplyInvoiceDetail detail:body.getDetail()){
 				ChildrenVO childrenvo=new ChildrenVO();
 				childrenvo.setHbbm(body.getPayerCode());
-				//childrenvo.setBbhl(detail.getCurRate());
-				childrenvo.setBzbm(detail.getCurrency());
+				if(!detail.getCurrency().equals("CNY")){
+					//childrenvo.setBbhl(detail.getCurRate());
+					//childrenvo.setBzbm(detail.getCurrency());
+					childrenvo.setZyx1(detail.getCurrency().toString()
+							+"金额:"
+							+detail.getInclusiveMoney().toString()
+							+"汇率:"
+							+detail.getCurRate().toString());
+				}
 				childrenvo.setSl(detail.getTaxRate());
 				childrenvo.setJfbbje(detail.getInclusiveRMB());
-				childrenvo.setJfybje(detail.getInclusiveMoney());
+				childrenvo.setJfybje(detail.getInclusiveRMB());
+				childrenvo.setZyx1(detail.getInsurTypeCode());//自定义1 险种编码
+				childrenvo.setZyx2(detail.getInsurTypeName());//自定义2 险种名称
+				//childrenvo.setJfybje(detail.getInclusiveMoney());
 				childrenvo.setSzxmid("A01001001");
 				children.add(childrenvo);
 			}

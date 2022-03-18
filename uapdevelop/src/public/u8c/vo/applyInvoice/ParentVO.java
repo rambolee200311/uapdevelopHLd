@@ -32,6 +32,41 @@ public class ParentVO {
     private String zyx3;
     private String zyx4;
     private String zyx5;
+    private String zyx6;
+    private String zyx7;
+    private String zyx8;
+    private String zyx9;
+    private String zyx10;
+	public String getZyx7() {
+		return zyx7;
+	}
+	public void setZyx7(String zyx7) {
+		this.zyx7 = zyx7;
+	}
+	public String getZyx8() {
+		return zyx8;
+	}
+	public void setZyx8(String zyx8) {
+		this.zyx8 = zyx8;
+	}
+	public String getZyx9() {
+		return zyx9;
+	}
+	public void setZyx9(String zyx9) {
+		this.zyx9 = zyx9;
+	}
+	public String getZyx10() {
+		return zyx10;
+	}
+	public void setZyx10(String zyx10) {
+		this.zyx10 = zyx10;
+	}
+	public String getZyx6() {
+		return zyx6;
+	}
+	public void setZyx6(String zyx6) {
+		this.zyx6 = zyx6;
+	}
 	public String getVouchid() {
 		return vouchid;
 	}

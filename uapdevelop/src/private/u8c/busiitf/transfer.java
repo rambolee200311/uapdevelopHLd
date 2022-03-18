@@ -142,9 +142,14 @@ import u8c.server.HttpURLConnectionDemo;
 				//µ¥¾ÝÌå
 				List<ChildrenVO> children=new ArrayList();
 				ChildrenVO childrenvo=new ChildrenVO();
-				//childrenvo.setBbhl(confirmArrivalBody.getCurRate());
+				if (!body.getCurrency().equals("CNY")){
+					childrenvo.setBbhl(body.getCurRate());
+					childrenvo.setBzbm(body.getCurrency());
+				}else{
+					childrenvo.setJfbbje(body.getTransferRMB());
+				}
 				childrenvo.setJfybje(body.getTransferAmount());
-				childrenvo.setJfbbje(body.getTransferRMB());
+				
 				childrenvo.setHbbm(body.getInsuranceCode());
 				childrenvo.setSzxmid("A00001");
 				childrenvo.setWldx("1");

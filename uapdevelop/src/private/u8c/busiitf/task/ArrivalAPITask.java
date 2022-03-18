@@ -49,6 +49,7 @@ public class ArrivalAPITask  implements nc.bs.pub.taskcenter.IBackgroundWorkPlug
 		LinkedHashMap<String, Object> para = param.getKeyMap();
 		String strbilltype = (String) para.get("billtype");
 		String strDdate = (String) para.get("ddate");
+		String strDjbh=(String) para.get("djbh");
 		if ((strDdate==null)||(strDdate.equals(null))||(strDdate.isEmpty())){
 			strDdate=strDate;
 		}
@@ -56,6 +57,10 @@ public class ArrivalAPITask  implements nc.bs.pub.taskcenter.IBackgroundWorkPlug
 		String sql1="select [bbje], [budgetcheck], [ddhbbm], [deinvdate], [djbh], [djdl], [djkjnd], [djkjqj], [djlxbm], [djrq], [djzt], [dr], [dwbm], [dyvouchid], [dzrq], [effectdate], [enduser], [fbje], [fcounteractflag], [feinvstatus], [finvoicetype], [fj], [fktjbm], [hzbz], [inner_effect_date], [isjszxzf], [isnetready], [isonlinepay], [ispaid], [isreded], [isselectedpay], [jszxzf], [kmbm], [kskhyh], [lastshr], [lasttzr], [lrr], [lybz], [officialprintdate], [officialprintuser], [outbusitype], [paydate], [payman], [pj_jsfs], [pj_num], [pj_oid], [prepay], [pzglh], [qcbz], [qrr], [scomment], [settlenum], [sfkr], [shkjnd], [shkjqj], [shr], [shrq], [shzd], [specflag], [spzt], [ssbh], [sscause], [sxbz], [sxkjnd], [sxkjqj], [sxr], [sxrq], [ts], [veinvcode], [veinvfailnote], [veinvnumber], [vouchid], [vsplitrecord], [vsrceinvcode], [vsrceinvnumber], [xslxbm], [ybje], [yhqrkjnd], [yhqrkjqj], [yhqrr], [yhqrrq], [ywbm], [zdr], [zdrq], [zgyf], [zyx1], [zyx10], [zyx11], [zyx12], [zyx13], [zyx14], [zyx15], [zyx16], [zyx17], [zyx18], [zyx19], [zyx2], [zyx20], [zyx21], [zyx22], [zyx23], [zyx24], [zyx25], [zyx26], [zyx27], [zyx28], [zyx29], [zyx3], [zyx30], [zyx4], [zyx5], [zyx6], [zyx7], [zyx8], [zyx9], [zzzt], [inccontype] " +
 					" from arap_djzb " +
 					" where djrq='"+strDdate+"' and djdl='sk' and djlxbm='"+strbilltype+"' and dr=0";
+		if (!(strDjbh==null)&&(!strDjbh.equals(null))&&(!strDjbh.isEmpty())){
+			sql1+=" and djbh='"+strDjbh+"'";
+		}
+		
 		//初始化报文
 		Arrival arrival=new Arrival();
 		ArrivalHeader arrivalHeader=new ArrivalHeader();
@@ -114,10 +119,10 @@ public class ArrivalAPITask  implements nc.bs.pub.taskcenter.IBackgroundWorkPlug
 			arrivalDataRoot.setTotalNum(iRow);
 			switch(strbilltype){
 				case "F2-01":
-					arrivalDataRoot.setArrivalBusinType("1");
+					arrivalDataRoot.setArrivalBusinType("2");
 					break;
 				case "F2-02":
-					arrivalDataRoot.setArrivalBusinType("2");
+					arrivalDataRoot.setArrivalBusinType("1");
 					break;	
 			}
 			

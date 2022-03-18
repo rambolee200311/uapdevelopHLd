@@ -156,9 +156,14 @@ public class arrival implements IAPICustmerDevelop{
 			//µ¥¾ÝÌå
 			List<ChildrenVO> children=new ArrayList();
 			ChildrenVO childrenvo=new ChildrenVO();
-			//childrenvo.setBbhl(confirmArrivalBody.getCurRate());
+			if (!confirmArrivalBody.getCurrency().equals("CNY")){
+				childrenvo.setBzbm(confirmArrivalBody.getCurrency());
+				childrenvo.setBbhl(confirmArrivalBody.getCurRate());
+			}else{
+				childrenvo.setDfbbje(confirmArrivalBody.getArrivalRMB());
+			}
 			childrenvo.setDfybje(confirmArrivalBody.getArrivalAmount());
-			childrenvo.setDfbbje(confirmArrivalBody.getArrivalRMB());
+			
 			childrenvo.setHbbm(confirmArrivalBody.getApCode());
 			children.add(childrenvo);
 			billVO.setChildren(children);
