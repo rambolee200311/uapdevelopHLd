@@ -73,7 +73,8 @@ public class TransferAPITask implements nc.bs.pub.taskcenter.IBackgroundWorkPlug
 		
 		//http post
 		strResult=HttpURLConnectionDemo.httpPostWithJson(
-				"http://10.0.0.107:38030/api/agent/TransferApi",
+				//"http://10.0.0.107:38030/api/agent/TransferApi",
+				u8c.server.XmlConfig.getUrl("TransferApi"),
 				JSON.toJSONString(transfer));
 		
 		return strResult;

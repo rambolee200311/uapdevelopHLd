@@ -69,7 +69,8 @@ public class RejectInvoiceAPITask implements nc.bs.pub.taskcenter.IBackgroundWor
 		
 		//http post
 		strResult=HttpURLConnectionDemo.httpPostWithJson(
-				"http://10.0.0.107:38030/api/reject/InvoiceApply",
+				//"http://10.0.0.107:38030/api/reject/InvoiceApply",
+				u8c.server.XmlConfig.getUrl("rejectInvoiceApply"),
 				JSON.toJSONString(invoice));
 		
 		return strResult;

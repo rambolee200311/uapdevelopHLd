@@ -181,7 +181,8 @@ public class InvoiceAPITask implements nc.bs.pub.taskcenter.IBackgroundWorkPlugi
 		
 		//http post
 		strResult=HttpURLConnectionDemo.httpPostWithJson(
-				"http://10.0.0.107:38030/api/agent/InvoiceApi",
+				//"http://10.0.0.107:38030/api/agent/InvoiceApi",
+				u8c.server.XmlConfig.getUrl("InvoiceApi"),
 				JSON.toJSONString(invoice));
 		JSONObject parameJson = JSONObject.parseObject(strResult);
 		RespMsg respMsg=JSON.toJavaObject(parameJson, RespMsg.class);

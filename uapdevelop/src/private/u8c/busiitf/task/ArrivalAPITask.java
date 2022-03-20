@@ -150,7 +150,8 @@ public class ArrivalAPITask  implements nc.bs.pub.taskcenter.IBackgroundWorkPlug
 			
 			arrival.setMessage(arrivalMessage);
 			strResult=HttpURLConnectionDemo.httpPostWithJson(
-					"http://10.0.0.107:38030/api/agent/ArrivalApi",
+					//"http://10.0.0.107:38030/api/agent/ArrivalApi",
+					u8c.server.XmlConfig.getUrl("ArrivalApi"),
 					JSON.toJSONString(arrival));
 			JSONObject parameJson = JSONObject.parseObject(strResult);
 			RespMsg respMsg=JSON.toJavaObject(parameJson, RespMsg.class);

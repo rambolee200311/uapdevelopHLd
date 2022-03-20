@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datas>
-	<data id="ArrivalApi">
+	<data id="ArrivalApi" des="到账登记">
 		<url>http://10.0.0.107:38030/api/agent/ArrivalApi</url>
 	</data>
-	<data id="InvoiceApi">
+	<data id="InvoiceApi" des="发票状态">
 		<url>http://10.0.0.107:38030/api/agent/InvoiceApi</url>
 	</data>
-	<data id="TransferApi">
+	<data id="TransferApi" des="付款状态">
 		<url>http://10.0.0.107:38030/api/agent/TransferApi</url>
+	</data>
+	<data id="rejectInvoiceApply"  des="开票退回">
+		<url>http://10.0.0.107:38030/api/reject/InvoiceApply</url>
+	</data>
+	<data id="rejectPaymentApply" des="付款退回">
+		<url>http://10.0.0.107:38030/api/reject/PaymentApply</url>
 	</data>
 </datas>

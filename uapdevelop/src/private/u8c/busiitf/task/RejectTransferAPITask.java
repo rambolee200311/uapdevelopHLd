@@ -65,7 +65,8 @@ public class RejectTransferAPITask implements nc.bs.pub.taskcenter.IBackgroundWo
 		
 		//http post
 		strResult=HttpURLConnectionDemo.httpPostWithJson(
-				"http://10.0.0.107:38030/api/reject/PaymentApply",
+				//"http://10.0.0.107:38030/api/reject/PaymentApply",
+				u8c.server.XmlConfig.getUrl("rejectPaymentApply"),
 				JSON.toJSONString(transfer));
 		
 		return strResult;
