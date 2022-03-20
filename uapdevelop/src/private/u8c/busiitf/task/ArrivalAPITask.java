@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.dao.DAOException;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import u8c.bs.exception.ConfigException;
@@ -158,16 +160,33 @@ public class ArrivalAPITask  implements nc.bs.pub.taskcenter.IBackgroundWorkPlug
 			
 			try {
 				strResult=encryptHelper.decrypt(respMsg.getMessage().getData());
+				/*
+				 * 20220320
+				 * 回写结果到zyx11,zyx12
+				 */
+				updateArrival(strResult);
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
 				
 				e.printStackTrace();
 			}
-			
-		//}
 		
-		//strResult=JSON.toJSONString(arrival);
-		//return strTemp+"  "+strResult;//"Success";
 		return strResult;
+	}
+	
+	private void updateArrival(String strResult){
+		JSONObject parameJson = JSONObject.parseObject(strResult);
+		ArrivalResultData arrivalResultData=JSON.toJavaObject(parameJson, ArrivalResultData.class);
+		for(ArrivalResult arrivalResult:arrivalResultData.getArrivalData()){
+			String vouchid=arrivalResult.getArrivalRegiCode();
+			String sql="update arap_djzb set zyx11='"+arrivalResult.getResultCode()+"',zyx12='"+arrivalResult.getResultDesc()+"'"
+					+" where vouchid='"+vouchid+"'";
+			try {
+				getDao().executeUpdate(sql);
+			} catch (DAOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

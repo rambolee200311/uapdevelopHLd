@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.dao.DAOException;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import u8c.bs.exception.ConfigException;
@@ -16,6 +18,8 @@ import u8c.vo.invoice.InvoiceData;
 import u8c.vo.invoice.InvoiceDataRoot;
 import u8c.vo.invoice.InvoiceHead;
 import u8c.vo.invoice.InvoiceMessage;
+import u8c.vo.invoice.InvoiceResult;
+import u8c.vo.invoice.InvoiceResultData;
 import u8c.vo.respmsg.RespMsg;
 import u8c.vo.arrival.EncryptHelper;
 import nc.bs.logging.Log;
@@ -189,6 +193,7 @@ public class InvoiceAPITask implements nc.bs.pub.taskcenter.IBackgroundWorkPlugi
 		
 		try {
 			strResult=encryptHelper.decrypt(respMsg.getMessage().getData());
+			updateInvoice(strResult);
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			Logger.error(e.getMessage(),e);
@@ -199,4 +204,20 @@ public class InvoiceAPITask implements nc.bs.pub.taskcenter.IBackgroundWorkPlugi
 		Log.getInstance("hanglianAPI").debug(strResult);
 		return strResult;
 	}
+	private void updateInvoice(String strResult){
+		JSONObject parameJson = JSONObject.parseObject(strResult);
+		InvoiceResultData arrivalResultData=JSON.toJavaObject(parameJson, InvoiceResultData.class);
+		for(InvoiceResult invoiceResult:arrivalResultData.getInvoiceData()){
+			String vouchid=invoiceResult.getInvoiceNo();
+			String sql="update arap_djzb set zyx11='"+invoiceResult.getResultCode()+"',zyx12='"+invoiceResult.getResultDesc()+"'"
+					+" where zyx2='"+vouchid+"'";
+			try {
+				getDao().executeUpdate(sql);
+			} catch (DAOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

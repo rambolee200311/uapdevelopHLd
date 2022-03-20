@@ -11,6 +11,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import nc.bs.dao.BaseDAO;
+import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDateTime;
 import u8c.bs.APIConst;
@@ -30,7 +33,13 @@ import u8c.vo.comfirmArrival.PostResult;
 import u8c.vo.pub.APIMessageVO;
 import u8c.server.HttpURLConnectionDemo;
 public class arrival implements IAPICustmerDevelop{
-	
+	private BaseDAO dao; 
+	private BaseDAO getDao() {
+		if (dao == null) {
+			dao = new BaseDAO();
+		}
+		return dao;
+	}
 	@Override
 	public String doAction(HttpServletRequest request)  throws BusinessException, ConfigException{
 		// 第一步：解析数据
@@ -60,8 +69,13 @@ public class arrival implements IAPICustmerDevelop{
 			ConfirmArrivalData dataResult=new ConfirmArrivalData();	
 			
 			for(ConfirmArrivalBody confirmArrivalBody:listConfirmArrivalBody){
-				PostResult postResult=setPostResult(confirmArrivalBody);
+				PostResult postResult=setPostResultYF(confirmArrivalBody);
 				listPostResult.add(postResult);
+				if (postResult.getStatus().equals("success")){
+					PostResult postResult1=setPostResultSKHZ(confirmArrivalBody);
+					listPostResult.add(postResult1);
+				}
+				
 			}
 			// 第三步：返回结果
 			obj=JSON.toJSONString(listPostResult);
@@ -129,7 +143,8 @@ public class arrival implements IAPICustmerDevelop{
 		billVO.setChildren(listChildrenVO);
 		return billVO;
 	}
-	private PostResult setPostResult(ConfirmArrivalBody confirmArrivalBody){
+	//到账认领收款红字 F2-02
+	private PostResult setPostResultSKHZ(ConfirmArrivalBody confirmArrivalBody){
 		PostResult postResult=new PostResult();
 		postResult.setBillID(confirmArrivalBody.getBillID());
 		postResult.setArrivalRegiCode(confirmArrivalBody.getArrivalRegiCode());
@@ -137,21 +152,30 @@ public class arrival implements IAPICustmerDevelop{
 		try{
 			// 第一步：组装数据
 			BillRootVO billRootVO=new BillRootVO();			
-			List<BillVO> listBillVO=new ArrayList();			
+			List<BillVO> listBillVO=new ArrayList();
+			String sql="select custcode from bd_cubasdoc a" 
+				+" inner join arap_djfb b on a.pk_cubasdoc=b.hbbm"
+				+" inner join arap_djzb c on b.vouchid=c.vouchid"
+				+" where c.vouchid='"+confirmArrivalBody.getArrivalRegiCode()+"'";
+			String custcode="";
+			custcode=(String)getDao().executeQuery(sql, new ColumnProcessor());
+			//到账认领收款
 			BillVO billVO=new BillVO();		
 			//单据头
 			ParentVO parentvo=new ParentVO();
-			parentvo.setBzbm(confirmArrivalBody.getCurrency());
+			parentvo.setBzbm(confirmArrivalBody.getCurrency());			
 			parentvo.setDjlxbm("F2-02");
 			parentvo.setDjrq(confirmArrivalBody.getBillDate());
 			parentvo.setDwbm(confirmArrivalBody.getComCode());
-			parentvo.setHbbm(confirmArrivalBody.getPayerCode());
+			//parentvo.setHbbm(confirmArrivalBody.getPayerCode());
+			parentvo.setHbbm(custcode);
 			parentvo.setLrr("13501036623");
 			parentvo.setPrepay(false);
 			parentvo.setScomment(confirmArrivalBody.getZyx1());
 			parentvo.setWldx("0");
 			parentvo.setXslxbm("ap01");
 			parentvo.setZyxl(confirmArrivalBody.getBillID());
+			parentvo.setZyx2(confirmArrivalBody.getArrivalRegiCode());
 			billVO.setParentvo(parentvo);
 			//单据体
 			List<ChildrenVO> children=new ArrayList();
@@ -160,14 +184,14 @@ public class arrival implements IAPICustmerDevelop{
 				childrenvo.setBzbm(confirmArrivalBody.getCurrency());
 				childrenvo.setBbhl(confirmArrivalBody.getCurRate());
 			}else{
-				childrenvo.setDfbbje(confirmArrivalBody.getArrivalRMB());
+				childrenvo.setDfbbje(confirmArrivalBody.getArrivalRMB()*-1);
 			}
-			childrenvo.setDfybje(confirmArrivalBody.getArrivalAmount());
+			childrenvo.setDfybje(confirmArrivalBody.getArrivalAmount()*-1);
 			
-			childrenvo.setHbbm(confirmArrivalBody.getApCode());
+			//childrenvo.setHbbm(confirmArrivalBody.getApCode());
+			childrenvo.setHbbm(custcode);
 			children.add(childrenvo);
 			billVO.setChildren(children);
-			
 			listBillVO.add(billVO);
 			billRootVO.setBillvo(listBillVO);
 			
@@ -204,6 +228,85 @@ public class arrival implements IAPICustmerDevelop{
 		}
 		return postResult;
 	}
+	//到账认领应付 F1-01
+	private PostResult setPostResultYF(ConfirmArrivalBody confirmArrivalBody){
+		PostResult postResult=new PostResult();
+		postResult.setBillID(confirmArrivalBody.getBillID());
+		postResult.setArrivalRegiCode(confirmArrivalBody.getArrivalRegiCode());
+		String strBody="";
+		try{
+			// 第一步：组装数据
+			BillRootVO billRootVO=new BillRootVO();			
+			List<BillVO> listBillVO=new ArrayList();
+			//到账认领应付
+			BillVO billVO1=new BillVO();
+			//单据头
+			ParentVO parentvo1=new ParentVO();
+			parentvo1.setBzbm(confirmArrivalBody.getCurrency());			
+			parentvo1.setDjlxbm("F1-01");
+			parentvo1.setDjrq(confirmArrivalBody.getBillDate());
+			parentvo1.setDwbm(confirmArrivalBody.getComCode());
+			parentvo1.setHbbm(confirmArrivalBody.getPayerCode());
+			parentvo1.setLrr("13501036623");
+			parentvo1.setPrepay(false);
+			parentvo1.setScomment(confirmArrivalBody.getZyx1());
+			parentvo1.setWldx("0");
+			parentvo1.setXslxbm("ap01");
+			parentvo1.setZyxl(confirmArrivalBody.getBillID());
+			parentvo1.setZyx2(confirmArrivalBody.getArrivalRegiCode());
+			billVO1.setParentvo(parentvo1);
+			//单据体
+			List<ChildrenVO> children1=new ArrayList();
+			ChildrenVO childrenvo1=new ChildrenVO();
+			if (!confirmArrivalBody.getCurrency().equals("CNY")){
+				childrenvo1.setBzbm(confirmArrivalBody.getCurrency());
+				childrenvo1.setBbhl(confirmArrivalBody.getCurRate());
+			}else{
+				childrenvo1.setDfbbje(confirmArrivalBody.getArrivalRMB());
+			}
+			childrenvo1.setDfybje(confirmArrivalBody.getArrivalAmount());
+			
+			childrenvo1.setHbbm(confirmArrivalBody.getApCode());
+			children1.add(childrenvo1);
+			billVO1.setChildren(children1);
+			
+			listBillVO.add(billVO1);
+			
+			billRootVO.setBillvo(listBillVO);
+			
+			// 第二步：提交到API				
+			// 服务器访问地址及端口,例如 http://ip:port
+			String serviceUrl = "http://127.0.0.1:9099/u8cloud/api/arap/yf/insert";
+			// 使用U8cloud系统中设置，具体节点路径为：
+			// 应用集成 - 系统集成平台 - 系统信息设置
+			// 设置信息中具体属性的对照关系如下：
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("trantype", "code"); // 档案翻译方式，枚举值为：编码请录入 code， 名称请录入 name， 主键请录入 pk
+			map.put("system", "busiitf"); // 系统编码
+			map.put("usercode", "busiuser"); // 用户
+			map.put("password", "bbbed85aa52a7dc74fc4b4bca8423394"); // 密码1qazWSX，需要 MD5 加密后录入				
+			map.put("uniquekey",confirmArrivalBody.getBillID());
+			strBody=HttpURLConnectionDemo.operator(serviceUrl, map,JSON.toJSONString(billRootVO));
+			
+			// 第三步：处理结果	
+			JSONObject jsonResult =JSON.parseObject(strBody);
+			u8c.vo.comfirmArrival.DataResponse dataResponse=JSON.toJavaObject(jsonResult, u8c.vo.comfirmArrival.DataResponse.class);		
+			if (dataResponse.getStatus().equals("success")){// 正常的返回
+				postResult.setStatus(dataResponse.getStatus());		
+				List<BillVO> billvoResult=JSON.parseArray(dataResponse.getData(),BillVO.class);
+				postResult.setU8cCode(billvoResult.get(0).getParentvo().getDjbh());
+			}else{// 异常的返回
+				//postResult.setStatus(dataResponse.getStatus());
+				postResult.setStatus("fail");
+				postResult.setU8cCode(dataResponse.getErrorcode()+"-"+dataResponse.getErrormsg());
+			}
+			}catch(Exception e){
+				postResult.setStatus("fail");			
+				postResult.setU8cCode(e.getMessage());
+				e.printStackTrace();
+			}
+			return postResult;
+		}
 	protected void writeMiddleFile(String path, String info) throws IOException,
     UnsupportedEncodingException {
 	  String[] date =

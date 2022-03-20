@@ -6,6 +6,8 @@ public class ChildrenVO {
     private double sl;
     private double dfybje;
     private double dfbbje;
+    private double jfybje;
+    private double jfbbje;
     private double bbhl;
     private double dfybsj;
     private double dfbbsj;
@@ -30,6 +32,18 @@ public class ChildrenVO {
     private String zyx3;
     private String zyx4;
     private String zyx5;
+	public double getJfybje() {
+		return jfybje;
+	}
+	public void setJfybje(double jfybje) {
+		this.jfybje = jfybje;
+	}
+	public double getJfbbje() {
+		return jfbbje;
+	}
+	public void setJfbbje(double jfbbje) {
+		this.jfbbje = jfbbje;
+	}
 	public String getFb_oid() {
 		return fb_oid;
 	}
