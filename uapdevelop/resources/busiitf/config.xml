@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datas>
-	<ArrivalApi>
+	<data id="ArrivalApi">
 		<url>http://10.0.0.107:38030/api/agent/ArrivalApi</url>
-	</ArrivalApi>
-	<InvoiceApi>
+	</data>
+	<data id="InvoiceApi">
 		<url>http://10.0.0.107:38030/api/agent/InvoiceApi</url>
-	</InvoiceApi>
-	<TransferApi>
+	</data>
+	<data id="TransferApi">
 		<url>http://10.0.0.107:38030/api/agent/TransferApi</url>
-	</TransferApi>
+	</data>
 </datas>
