@@ -165,8 +165,8 @@ public class reverseinvoice  implements IAPICustmerDevelop{
 							);
 				}
 				//childrenvo.setSl(body.getTaxRate());
-				childrenvo.setJfbbje(body.getReverseInclusiveRMB());
-				childrenvo.setJfybje(body.getReverseInclusiveRMB());
+				childrenvo.setJfbbje(Double.toString(body.getReverseInclusiveRMB()));
+				childrenvo.setJfybje(Double.toString(body.getReverseInclusiveRMB()));
 				childrenvo.setZyx1(vobs.get(0).getZyx1());//自定义1 险种编码
 				childrenvo.setZyx2(vobs.get(0).getZyx2());//自定义2 险种名称
 				//childrenvo.setJfybje(detail.getInclusiveMoney());
@@ -184,7 +184,8 @@ public class reverseinvoice  implements IAPICustmerDevelop{
 			
 			// 第二步：提交到API				
 			// 服务器访问地址及端口,例如 http://ip:port
-			String serviceUrl = "http://127.0.0.1:9099/u8cloud/api/arap/ys/insert";
+			String serviceUrl =u8c.server.XmlConfig.getUrl("u8carapysinsert");
+			//"http://127.0.0.1:9099/u8cloud/api/arap/ys/insert";
 			// 使用U8cloud系统中设置，具体节点路径为：
 			// 应用集成 - 系统集成平台 - 系统信息设置
 			// 设置信息中具体属性的对照关系如下：

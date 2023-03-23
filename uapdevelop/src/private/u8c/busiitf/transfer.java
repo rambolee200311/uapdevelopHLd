@@ -162,7 +162,8 @@ import u8c.server.HttpURLConnectionDemo;
 				
 				// 第二步：提交到API				
 				// 服务器访问地址及端口,例如 http://ip:port
-				String serviceUrl = "http://127.0.0.1:9099/u8cloud/api/arap/fk/insert";
+				String serviceUrl = u8c.server.XmlConfig.getUrl("u8carapfkinsert");
+				//"http://127.0.0.1:9099/u8cloud/api/arap/fk/insert";
 				// 使用U8cloud系统中设置，具体节点路径为：
 				// 应用集成 - 系统集成平台 - 系统信息设置
 				// 设置信息中具体属性的对照关系如下：

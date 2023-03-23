@@ -143,7 +143,7 @@ public class arrival implements IAPICustmerDevelop{
 		billVO.setChildren(listChildrenVO);
 		return billVO;
 	}
-	//到账认领收款红字 F2-02
+	//到账认领收款红字 F2-03
 	private PostResult setPostResultSKHZ(ConfirmArrivalBody confirmArrivalBody){
 		PostResult postResult=new PostResult();
 		postResult.setBillID(confirmArrivalBody.getBillID());
@@ -164,7 +164,7 @@ public class arrival implements IAPICustmerDevelop{
 			//单据头
 			ParentVO parentvo=new ParentVO();
 			parentvo.setBzbm(confirmArrivalBody.getCurrency());			
-			parentvo.setDjlxbm("F2-02");
+			parentvo.setDjlxbm("F2-03");
 			parentvo.setDjrq(confirmArrivalBody.getBillDate());
 			parentvo.setDwbm(confirmArrivalBody.getComCode());
 			//parentvo.setHbbm(confirmArrivalBody.getPayerCode());
@@ -197,7 +197,8 @@ public class arrival implements IAPICustmerDevelop{
 			
 			// 第二步：提交到API				
 			// 服务器访问地址及端口,例如 http://ip:port
-			String serviceUrl = "http://127.0.0.1:9099/u8cloud/api/arap/sk/insert";
+			String serviceUrl =u8c.server.XmlConfig.getUrl("u8carapskinsert");
+			//"http://127.0.0.1:9099/u8cloud/api/arap/sk/insert";
 			// 使用U8cloud系统中设置，具体节点路径为：
 			// 应用集成 - 系统集成平台 - 系统信息设置
 			// 设置信息中具体属性的对照关系如下：
@@ -276,7 +277,8 @@ public class arrival implements IAPICustmerDevelop{
 			
 			// 第二步：提交到API				
 			// 服务器访问地址及端口,例如 http://ip:port
-			String serviceUrl = "http://127.0.0.1:9099/u8cloud/api/arap/yf/insert";
+			String serviceUrl =u8c.server.XmlConfig.getUrl("u8carapyfinsert");
+			//"http://127.0.0.1:9099/u8cloud/api/arap/yf/insert";
 			// 使用U8cloud系统中设置，具体节点路径为：
 			// 应用集成 - 系统集成平台 - 系统信息设置
 			// 设置信息中具体属性的对照关系如下：

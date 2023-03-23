@@ -11,6 +11,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import nc.bs.dao.BaseDAO;
+import nc.jdbc.framework.processor.BeanProcessor;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDateTime;
 import u8c.bs.APIConst;
@@ -21,10 +24,20 @@ import u8c.pubitf.action.IAPICustmerDevelop;
 import u8c.vo.arrival.EncryptHelper;
 import u8c.vo.pub.APIMessageVO;
 import u8c.server.HttpURLConnectionDemo;
-
+import u8c.vo.entity.CorpVO;
+import u8c.vo.entity.CostsubjVO;
 import u8c.vo.applyInvoice.*;
 
+import u8c.bs.convert.JSONConvertor;
+
 public class invoice  implements IAPICustmerDevelop{
+	private BaseDAO dao; 
+	private BaseDAO getDao() {
+		if (dao == null) {
+			dao = new BaseDAO();
+		}
+		return dao;
+	}
 	@Override
 	public String doAction(HttpServletRequest request)  throws BusinessException, ConfigException{
 		// 第一步：解析数据
@@ -51,6 +64,7 @@ public class invoice  implements IAPICustmerDevelop{
 			writeMiddleFile(APIConst.INDOCPATH + "u8c.busiitf.invoice", strTemp);
 			
 			List<ApplyInvoiceBody> bodys=JSON.parseArray(strBody,ApplyInvoiceBody.class);
+			
 			List<PostResult> listPostResult=new ArrayList();//返回结果
 			ApplyInvoiceData dataResult=new ApplyInvoiceData();
 			
@@ -84,8 +98,9 @@ public class invoice  implements IAPICustmerDevelop{
 	private PostResult setPostResult(ApplyInvoiceBody body){
 		PostResult postResult=new PostResult();
 		postResult.setBillID(body.getAdviceNote());		
-		
+		String sql3="";
 		String strBody="";
+		CostsubjVO costsubjVO;
 		try{
 			// 第一步：组装数据
 			BillRootVO billRootVO=new BillRootVO();			
@@ -95,6 +110,7 @@ public class invoice  implements IAPICustmerDevelop{
 			ParentVO parentvo=new ParentVO();			
 			parentvo.setDjlxbm("F0-01");
 			parentvo.setDjrq(body.getAdviceDate());
+			
 			parentvo.setDwbm(body.getComCode());			
 			parentvo.setLrr("13501036623");
 			parentvo.setPrepay(false);
@@ -121,9 +137,19 @@ public class invoice  implements IAPICustmerDevelop{
 							+"汇率:"
 							+detail.getCurRate().toString());
 				}
+				
+				//收支项目
+				sql3="select pk_costsubj,costcode,costname from bd_costsubj where pk_corp=(select pk_corp from bd_corp where unitcode='"+body.getComCode().toString()+"') and costname='"+detail.getInsurTypeName().toString()+"'";
+				costsubjVO=(CostsubjVO)getDao().executeQuery(sql3, new BeanProcessor(CostsubjVO.class));
+				if (costsubjVO!=null){
+					childrenvo.setSzxmid(costsubjVO.getPk_costsubj());
+					childrenvo.setSzxmid_code(costsubjVO.getCostcode());
+					childrenvo.setSzxmid_name(costsubjVO.getCostname());
+				}
+				
 				childrenvo.setSl(detail.getTaxRate());
-				childrenvo.setJfbbje(detail.getInclusiveRMB());
-				childrenvo.setJfybje(detail.getInclusiveRMB());
+				childrenvo.setJfbbje(Double.toString(detail.getInclusiveRMB()));
+				childrenvo.setJfybje(Double.toString(detail.getInclusiveRMB()));
 				childrenvo.setZyx1(detail.getInsurTypeCode());//自定义1 险种编码
 				childrenvo.setZyx2(detail.getInsurTypeName());//自定义2 险种名称
 				//childrenvo.setJfybje(detail.getInclusiveMoney());
@@ -137,7 +163,8 @@ public class invoice  implements IAPICustmerDevelop{
 			
 			// 第二步：提交到API				
 			// 服务器访问地址及端口,例如 http://ip:port
-			String serviceUrl = "http://127.0.0.1:9099/u8cloud/api/arap/ys/insert";
+			String serviceUrl =u8c.server.XmlConfig.getUrl("u8carapysinsert");
+			//"http://127.0.0.1:9099/u8cloud/api/arap/ys/insert";
 			// 使用U8cloud系统中设置，具体节点路径为：
 			// 应用集成 - 系统集成平台 - 系统信息设置
 			// 设置信息中具体属性的对照关系如下：

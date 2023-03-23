@@ -5,6 +5,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import nc.bs.logging.Log;
+import nc.bs.logging.Logger;
 public class XmlConfig {
 	private static String fileName=RuntimeEnv.getNCHome()
 			+ File.separator+"resources"
@@ -13,6 +15,7 @@ public class XmlConfig {
 	
 	public static String getUrl(String id){
 		String strResult="";
+		Logger.init("hanglianAPI");
 		SAXReader reader = new SAXReader();
 		try {
 			Document document = reader.read(new File(fileName));
@@ -24,8 +27,12 @@ public class XmlConfig {
 			}
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
+			Logger.error(e.getMessage(),e);
+			Log.getInstance("hanglianAPI").error(e.getMessage(),e);
 			e.printStackTrace();
 		}
+		Logger.debug(strResult);
+		Log.getInstance("hanglianAPI").debug(strResult);
 		return strResult;
 	}
 }

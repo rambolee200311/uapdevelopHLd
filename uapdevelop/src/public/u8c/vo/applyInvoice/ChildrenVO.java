@@ -4,8 +4,8 @@ public class ChildrenVO {
 	 private String fb_oid;
 	    private String vouchid;
 	    private Double sl;
-	    private Double jfybje;
-	    private Double jfbbje;
+	    private String jfybje;
+	    private String jfbbje;
 	    private Double bbhl;
 	    private Double jfybsj;
 	    private Double jfbbsj;
@@ -53,16 +53,16 @@ public class ChildrenVO {
 		public void setSl(Double sl) {
 			this.sl = sl;
 		}
-		public Double getJfybje() {
+		public String getJfybje() {
 			return jfybje;
 		}
-		public void setJfybje(Double jfybje) {
+		public void setJfybje(String jfybje) {
 			this.jfybje = jfybje;
 		}
-		public Double getJfbbje() {
+		public String getJfbbje() {
 			return jfbbje;
 		}
-		public void setJfbbje(Double jfbbje) {
+		public void setJfbbje(String jfbbje) {
 			this.jfbbje = jfbbje;
 		}
 		public Double getBbhl() {

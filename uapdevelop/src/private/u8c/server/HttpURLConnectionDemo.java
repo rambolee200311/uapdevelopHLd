@@ -19,10 +19,14 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 
+import com.alibaba.fastjson.JSON;
+
 public class HttpURLConnectionDemo {
 	public static String httpPostWithJson(String url,String postData){
 		String result="";
 		HttpPost post = null;
+		Logger.init("hanglianAPI");
+		Logger.debug(postData);
 	    try {
 	    	// 获得Http客户端(可以理解为:你得先有一个浏览器;注意:实际上HttpClient与浏览器是不一样的)
 	        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -68,6 +72,8 @@ public class HttpURLConnectionDemo {
 	public static String operator(String url, Map<String, Object> headparams,String json) {
 		HttpClient httpClient = new HttpClient();
 		PostMethod httpPost = new PostMethod(url);
+		Logger.init("hanglianAPI");
+		Logger.debug(json);
 		httpPost.setRequestHeader("content-type",
 				"application/json;charset=utf-8");
 		for (Entry<String, Object> entry : headparams.entrySet()) {
@@ -79,8 +85,9 @@ public class HttpURLConnectionDemo {
 					"application/json", "UTF-8");
 			httpPost.setRequestEntity(entity);
 			httpClient.executeMethod(httpPost);
-
-			return httpPost.getResponseBodyAsString();
+			json=httpPost.getResponseBodyAsString();
+			Logger.debug(json);
+			return json;
 
 		} catch (HttpException e) {
 			e.printStackTrace();
